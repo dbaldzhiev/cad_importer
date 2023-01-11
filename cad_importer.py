@@ -197,4 +197,5 @@ class cad_import_class:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
+            print(self.mQgsFileWidget.filePath())
             pass
