@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Importer documentation build configuration file, created by
+# cad_import_class documentation build configuration file, created by
 # sphinx-quickstart on Sun Feb 12 17:11:03 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Importer'
+project = u'cad_import_class'
 copyright = u'2013, Dimitar Baldzhiev'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -178,7 +178,7 @@ htmlhelp_basename = 'TemplateClassdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Importer.tex', u'Importer Documentation',
+  ('index', 'cad_import_class.tex', u'cad_import_class Documentation',
    u'Dimitar Baldzhiev', 'manual'),
 ]
 
@@ -211,6 +211,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'TemplateClass', u'Importer Documentation',
+    ('index', 'TemplateClass', u'cad_import_class Documentation',
      [u'Dimitar Baldzhiev'], 1)
 ]

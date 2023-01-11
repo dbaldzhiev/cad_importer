@@ -9,7 +9,7 @@
 """
 
 __author__ = 'db@tectonica-b.com'
-__date__ = '2023-01-10'
+__date__ = '2023-01-11'
 __copyright__ = 'Copyright 2023, Dimitar Baldzhiev'
 
 import unittest
@@ -18,7 +18,7 @@ from qgis.PyQt.QtGui import QIcon
 
 
 
-class ImporterDialogTest(unittest.TestCase):
+class cad_import_classDialogTest(unittest.TestCase):
     """Test rerources work."""
 
     def setUp(self):
@@ -31,12 +31,12 @@ class ImporterDialogTest(unittest.TestCase):
 
     def test_icon_png(self):
         """Test we can click OK."""
-        path = ':/plugins/Importer/icon.png'
+        path = ':/plugins/cad_import_class/icon.png'
         icon = QIcon(path)
         self.assertFalse(icon.isNull())
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(ImporterResourcesTest)
+    suite = unittest.makeSuite(cad_import_classResourcesTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

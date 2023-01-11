@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ImporterDialogBase</class>
- <widget class="QDialog" name="ImporterDialogBase">
+ <class>cad_import_classDialogBase</class>
+ <widget class="QDialog" name="cad_import_classDialogBase">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>395</width>
-    <height>113</height>
+    <width>580</width>
+    <height>120</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>580</width>
+    <height>120</height>
+   </size>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>CAD4 Importer</string>
@@ -16,10 +31,10 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>60</y>
-     <width>341</width>
-     <height>32</height>
+     <x>110</x>
+     <y>80</y>
+     <width>441</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="orientation">
@@ -28,15 +43,50 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QgsFileWidget" name="mQgsFileWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>351</width>
-     <height>31</height>
+     <x>110</x>
+     <y>40</y>
+     <width>440</width>
+     <height>30</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>15</y>
+     <width>210</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Select valid CAD4 file to import</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>81</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>logo.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
@@ -52,7 +102,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>ImporterDialogBase</receiver>
+   <receiver>cad_import_classDialogBase</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -68,7 +118,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>ImporterDialogBase</receiver>
+   <receiver>cad_import_classDialogBase</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

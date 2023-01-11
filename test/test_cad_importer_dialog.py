@@ -9,25 +9,25 @@
 """
 
 __author__ = 'db@tectonica-b.com'
-__date__ = '2023-01-10'
+__date__ = '2023-01-11'
 __copyright__ = 'Copyright 2023, Dimitar Baldzhiev'
 
 import unittest
 
 from qgis.PyQt.QtGui import QDialogButtonBox, QDialog
 
-from cad_importer_dialog import ImporterDialog
+from cad_importer_dialog import cad_import_classDialog
 
 from utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
 
 
-class ImporterDialogTest(unittest.TestCase):
+class cad_import_classDialogTest(unittest.TestCase):
     """Test dialog works."""
 
     def setUp(self):
         """Runs before each test."""
-        self.dialog = ImporterDialog(None)
+        self.dialog = cad_import_classDialog(None)
 
     def tearDown(self):
         """Runs after each test."""
@@ -49,7 +49,7 @@ class ImporterDialogTest(unittest.TestCase):
         self.assertEqual(result, QDialog.Rejected)
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(ImporterDialogTest)
+    suite = unittest.makeSuite(cad_import_classDialogTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

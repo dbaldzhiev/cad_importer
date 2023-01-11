@@ -5,12 +5,12 @@
 [general]
 name=CAD4 Importer
 qgisMinimumVersion=3.0
-description=This plugin importrs Bulgarian Cadastral CAD4 files to QGIS.
+description=Import Bulgarian CAD4 files to QGIS.
 version=0.1
 author=Dimitar Baldzhiev
 email=db@tectonica-b.com
 
-about=This plugin importrs Bulgarian Cadastral CAD4 files to QGIS.
+about=Import Bulgarian CAD4 files to QGIS.
 
 tracker=http://bugs
 repository=http://repo
@@ -26,7 +26,7 @@ hasProcessingProvider=no
 tags=python
 
 homepage=http://homepage
-category=Vector
+category=Plugins
 icon=icon.png
 # experimental flag
 experimental=True

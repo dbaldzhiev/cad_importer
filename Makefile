@@ -1,9 +1,9 @@
 #/***************************************************************************
-# Importer
+# cad_import_class
 #
-# This plugin importrs Bulgarian Cadastral CAD4 files to QGIS.
+# Import Bulgarian CAD4 files to QGIS.
 #							 -------------------
-#		begin				: 2023-01-10
+#		begin				: 2023-01-11
 #		git sha				: $Format:%H$
 #		copyright			: (C) 2023 by Dimitar Baldzhiev
 #		email				: db@tectonica-b.com

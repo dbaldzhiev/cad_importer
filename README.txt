@@ -1,6 +1,6 @@
 Plugin Builder Results
 
-Your plugin Importer was created in:
+Your plugin cad_import_class was created in:
     C:/Users/Dimitar/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins\cad_importer
 
 Your QGIS plugin directory is located at:
@@ -21,7 +21,7 @@ What's Next:
 
   * Create your own custom icon, replacing the default icon.png
 
-  * Modify your user interface by opening Importer_dialog_base.ui in Qt Designer
+  * Modify your user interface by opening cad_import_class_dialog_base.ui in Qt Designer
 
   * You can use the Makefile to compile your Ui and resource files when
     you make changes. This requires GNU make (gmake)
