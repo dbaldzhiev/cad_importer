@@ -30,7 +30,7 @@ from .resources import *
 # Import the code for the dialog
 from .cad_importer_dialog import cad_import_classDialog
 import os.path
-
+from .cadutils import *
 
 class cad_import_class:
     """QGIS Plugin Implementation."""
@@ -197,5 +197,7 @@ class cad_import_class:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            print(self.mQgsFileWidget.filePath())
-            pass
+            filename = self.dlg.cadFilePath.filePath()
+            print(filename)
+            CF = ReadCadastralFile(filename)
+            print("READING DONE")

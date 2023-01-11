@@ -47,7 +47,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QgsFileWidget" name="mQgsFileWidget">
+  <widget class="QgsFileWidget" name="cadFilePath">
    <property name="geometry">
     <rect>
      <x>110</x>
