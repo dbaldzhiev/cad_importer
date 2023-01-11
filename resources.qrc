@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/cad_importer" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
