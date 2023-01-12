@@ -182,7 +182,49 @@ class cad_import_class:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def addLines(self,CF):
+        layerBag = qc.QgsVectorLayer("LineString?crs=epsg:7801", "Lines_" + CF.Filename, "memory")
 
+        pr = layerBag.dataProvider()
+        pr.addAttributes([
+            qc.QgsField("id", QVariant.Int),
+            qc.QgsField("type", QVariant.String)])
+        layerBag.updateFields()
+        qc.QgsProject.instance().addMapLayer(layerBag)
+        layerBag.startEditing()
+
+        for line in CF.CadasterLayer.lineObj:
+            feat = qc.QgsFeature(layerBag.fields())  # Create the feature
+            feat.setAttribute("id", line.lid)  # set attributes
+            feat.setAttribute("type", line.type)
+            feat.setGeometry(qc.QgsGeometry.fromPolylineXY(
+                [qc.QgsPointXY(ptx, pty) for ptx, pty in line.get_referenced_point_sequence]))
+            layerBag.addFeature(feat)  # add the feature to the layer
+
+        layerBag.endEditCommand()  # Stop editing
+        layerBag.commitChanges()  # Save changes
+    def addContours(self,CF):
+        layerBag = qc.QgsVectorLayer("LineString?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
+
+        pr = layerBag.dataProvider()
+        pr.addAttributes([
+            qc.QgsField("id", QVariant.String),
+            qc.QgsField("type", QVariant.String)])
+        layerBag.updateFields()
+        qc.QgsProject.instance().addMapLayer(layerBag)
+        layerBag.startEditing()
+
+        for contour in CF.CadasterLayer.contourObj:
+            feat = qc.QgsFeature(layerBag.fields())  # Create the feature
+            feat.setAttribute("id", contour.cid)  # set attributes
+            feat.setAttribute("type", contour.type)
+            if not contour.pgon_bad_flag:
+                a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
+                feat.setGeometry(qc.QgsGeometry.fromPolygonXY([a]))
+                layerBag.addFeature(feat)  # add the feature to the layer
+
+        layerBag.endEditCommand()  # Stop editing
+        layerBag.commitChanges()  # Save changes
     def run(self):
         """Run method that performs all the real work"""
 
@@ -202,33 +244,9 @@ class cad_import_class:
             # substitute with your code.
             filename = self.dlg.cadFilePath.filePath()
             print(filename)
-            CF = ReadCadastralFile(filename)
-
-            capa = qc.QgsVectorLayer("LineString?crs=epsg:7801", CF.Filename, "memory")
-
-            pr = capa.dataProvider()
-            pr.addAttributes([
-                qc.QgsField("id", QVariant.Int),
-                qc.QgsField("type", QVariant.String)])
-            capa.updateFields()
-
-            # Add the layer in QGIS project
-            qc.QgsProject.instance().addMapLayer(capa)
-
-            # Start editing layer
-            capa.startEditing()
-
-
-            for line in CF.CadasterLayer.lineObj:
-                feat = qc.QgsFeature(capa.fields())  # Create the feature
-                feat.setAttribute("id", line.lid)  # set attributes
-                feat.setAttribute("type", line.type)
-                a = [qc.QgsPointXY(ptx,pty) for ptx,pty in line.get_referenced_point_sequence]
-                feat.setGeometry(qc.QgsGeometry.fromPolylineXY(a))
-                capa.addFeature(feat)  # add the feature to the layer
-
-            capa.endEditCommand()  # Stop editing
-            capa.commitChanges()  # Save changes
-
+            CCF = ReadCadastralFile(filename)
+            #self.addLines(CCF)
+            self.addContours(CCF)
 
             print("READING DONE")
+
