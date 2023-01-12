@@ -21,9 +21,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
+#from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature
+import qgis.core as qc
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -200,4 +203,32 @@ class cad_import_class:
             filename = self.dlg.cadFilePath.filePath()
             print(filename)
             CF = ReadCadastralFile(filename)
+
+            capa = qc.QgsVectorLayer("LineString?crs=epsg:7801", CF.Filename, "memory")
+
+            pr = capa.dataProvider()
+            pr.addAttributes([
+                qc.QgsField("id", QVariant.Int),
+                qc.QgsField("type", QVariant.String)])
+            capa.updateFields()
+
+            # Add the layer in QGIS project
+            qc.QgsProject.instance().addMapLayer(capa)
+
+            # Start editing layer
+            capa.startEditing()
+
+
+            for line in CF.CadasterLayer.lineObj:
+                feat = qc.QgsFeature(capa.fields())  # Create the feature
+                feat.setAttribute("id", line.lid)  # set attributes
+                feat.setAttribute("type", line.type)
+                a = [qc.QgsPointXY(ptx,pty) for ptx,pty in line.get_referenced_point_sequence]
+                feat.setGeometry(qc.QgsGeometry.fromPolylineXY(a))
+                capa.addFeature(feat)  # add the feature to the layer
+
+            capa.endEditCommand()  # Stop editing
+            capa.commitChanges()  # Save changes
+
+
             print("READING DONE")
