@@ -251,7 +251,7 @@ class cad_import_class:
             feat.setAttribute("type", gptt.type)
                 #a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
             feat.setGeometry(qc.QgsPointXY(gptt.posXR, gptt.posYR))
-            layerBag.addFeature(feat)  # add the feature to the layer
+            qalayerBag.addFeature(feat)  # add the feature to the layer
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
