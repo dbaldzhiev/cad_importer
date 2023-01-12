@@ -35,6 +35,10 @@ from .cad_importer_dialog import cad_import_classDialog
 import os.path
 from .cadutils import *
 
+
+from inspect import getsourcefile
+from os.path import abspath
+
 class cad_import_class:
     """QGIS Plugin Implementation."""
 
@@ -192,6 +196,7 @@ class cad_import_class:
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
+        layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\LLStyle.qml")
 
         for line in CF.CadasterLayer.lineObj:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
@@ -204,7 +209,7 @@ class cad_import_class:
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
     def addContours(self,CF):
-        layerBag = qc.QgsVectorLayer("LineString?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
+        layerBag = qc.QgsVectorLayer("Polygon?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
@@ -213,6 +218,8 @@ class cad_import_class:
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
+        layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\CLStyle.qml")
+
 
         for contour in CF.CadasterLayer.contourObj:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
@@ -222,6 +229,29 @@ class cad_import_class:
                 a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
                 feat.setGeometry(qc.QgsGeometry.fromPolygonXY([a]))
                 layerBag.addFeature(feat)  # add the feature to the layer
+
+        layerBag.endEditCommand()  # Stop editing
+        layerBag.commitChanges()  # Save changes
+    def addPt(self,CF):
+        layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
+
+        pr = layerBag.dataProvider()
+        pr.addAttributes([
+            qc.QgsField("id", QVariant.String),
+            qc.QgsField("type", QVariant.String)])
+        layerBag.updateFields()
+        qc.QgsProject.instance().addMapLayer(layerBag)
+        layerBag.startEditing()
+        #layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\CLStyle.qml")
+
+
+        for gptt in CF.CadasterLayer.gepointObj:
+            feat = qc.QgsFeature(layerBag.fields())  # Create the feature
+            feat.setAttribute("id", gptt.id)  # set attributes
+            feat.setAttribute("type", gptt.type)
+                #a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
+            feat.setGeometry(qc.QgsPointXY(gptt.posXR, gptt.posYR))
+            layerBag.addFeature(feat)  # add the feature to the layer
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
@@ -243,10 +273,10 @@ class cad_import_class:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             filename = self.dlg.cadFilePath.filePath()
-            print(filename)
             CCF = ReadCadastralFile(filename)
-            #self.addLines(CCF)
+            self.addLines(CCF)
             self.addContours(CCF)
+            self.addPt(CCF)
 
             print("READING DONE")
 
