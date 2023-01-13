@@ -233,7 +233,7 @@ class cad_import_class:
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
     def addPt(self,CF):
-        layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
+        layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "GeoPts_" + CF.Filename, "memory")
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
@@ -268,14 +268,14 @@ class cad_import_class:
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
-        # layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\CLStyle.qml")
+        layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\TLStyle.qml")
 
         for txt in CF.CadasterLayer.textObj:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
             feat.setAttribute("id", txt.id)  # set attributes
             feat.setAttribute("type", txt.type)
-            feat.setAttribute("prefixtext", txt.prefixtext)  # set attributes
-            feat.setAttribute("suffixtext", txt.suffixtext)
+            feat.setAttribute("prefixtext", txt.prefixtext.replace("None",""))  # set attributes
+            feat.setAttribute("suffixtext", txt.suffixtext.replace("None",""))
             # a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
             feat.setGeometry(qc.QgsPoint(txt.posXR, txt.posYR))
             layerBag.addFeature(feat)  # add the feature to the layer
