@@ -33,12 +33,12 @@ from .resources import *
 # Import the code for the dialog
 from .cad_importer_dialog import cad_import_classDialog
 import os.path
-from .cadutils import *
+from .cadutils import utils
 
 
 from inspect import getsourcefile
 from os.path import abspath
-
+import re
 class cad_import_class:
     """QGIS Plugin Implementation."""
 
@@ -272,11 +272,13 @@ class cad_import_class:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            filename = self.dlg.cadFilePath.filePath()
-            CCF = ReadCadastralFile(filename)
-            self.addLines(CCF)
-            self.addContours(CCF)
-            self.addPt(CCF)
+            filenames = self.dlg.cadFilePath.splitFilePaths(self.dlg.cadFilePath.filePath())
+            print(filenames)
+            for filename in filenames:
+                CCF = utils.ReadCadastralFile(filename)
+                self.addContours(CCF)
+                self.addLines(CCF)
+                self.addPt(CCF)
 
             print("READING DONE")
 

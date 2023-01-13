@@ -56,6 +56,9 @@
      <height>30</height>
     </rect>
    </property>
+   <property name="storageMode">
+    <enum>QgsFileWidget::GetMultipleFiles</enum>
+   </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">

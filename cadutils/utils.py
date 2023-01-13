@@ -14,7 +14,6 @@ if debug:
         print("Missing debug modules...")
 from .mik import *
 
-
 class ReadCadastralFile:
 
     def __init__(self, pathtofile):
