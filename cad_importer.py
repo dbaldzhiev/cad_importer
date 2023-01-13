@@ -251,7 +251,34 @@ class cad_import_class:
             feat.setAttribute("type", gptt.type)
                 #a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
             feat.setGeometry(qc.QgsPointXY(gptt.posXR, gptt.posYR))
-            qalayerBag.addFeature(feat)  # add the feature to the layer
+            layerBag.addFeature(feat)  # add the feature to the layer
+
+        layerBag.endEditCommand()  # Stop editing
+        layerBag.commitChanges()  # Save changes
+
+    def addCadTxt(self, CF):
+        layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "Texts_" + CF.Filename, "memory")
+
+        pr = layerBag.dataProvider()
+        pr.addAttributes([
+            qc.QgsField("id", QVariant.String),
+            qc.QgsField("type", QVariant.String),
+            qc.QgsField("prefixtext", QVariant.String),
+            qc.QgsField("suffixtext", QVariant.String)])
+        layerBag.updateFields()
+        qc.QgsProject.instance().addMapLayer(layerBag)
+        layerBag.startEditing()
+        # layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\CLStyle.qml")
+
+        for txt in CF.CadasterLayer.textObj:
+            feat = qc.QgsFeature(layerBag.fields())  # Create the feature
+            feat.setAttribute("id", txt.id)  # set attributes
+            feat.setAttribute("type", txt.type)
+            feat.setAttribute("prefixtext", txt.prefixtext)  # set attributes
+            feat.setAttribute("suffixtext", txt.suffixtext)
+            # a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
+            feat.setGeometry(qc.QgsPoint(txt.posXR, txt.posYR))
+            layerBag.addFeature(feat)  # add the feature to the layer
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
@@ -273,12 +300,12 @@ class cad_import_class:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             filenames = self.dlg.cadFilePath.splitFilePaths(self.dlg.cadFilePath.filePath())
-            print(filenames)
             for filename in filenames:
                 CCF = utils.ReadCadastralFile(filename)
                 self.addContours(CCF)
                 self.addLines(CCF)
                 self.addPt(CCF)
+                self.addCadTxt(CCF)
 
             print("READING DONE")
 
