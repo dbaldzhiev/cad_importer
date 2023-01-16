@@ -31,10 +31,10 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>380</x>
      <y>80</y>
-     <width>441</width>
-     <height>21</height>
+     <width>170</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="orientation">
@@ -63,7 +63,7 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>110</x>
      <y>15</y>
      <width>421</width>
      <height>21</height>
@@ -90,6 +90,19 @@
    </property>
    <property name="scaledContents">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="mergeToggle">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>80</y>
+     <width>260</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Merge multiple CADs</string>
    </property>
   </widget>
  </widget>

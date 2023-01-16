@@ -24,6 +24,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 #from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature
 import qgis.core as qc
+
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
@@ -186,8 +187,17 @@ class cad_import_class:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    def addLines(self,CF):
-        layerBag = qc.QgsVectorLayer("LineString?crs=epsg:7801", "Lines_" + CF.Filename, "memory")
+    def addLines(self,CF,merge):
+
+        if merge == 2:
+            layers = qc.QgsProject.instance().mapLayersByName("Lines_")
+            exist = True if layers else False
+            if not(exist):
+                layerBag = qc.QgsVectorLayer("LineString?crs=epsg:7801", "Lines_", "memory")
+            else:
+                layerBag = qc.QgsProject.instance().mapLayersByName("Lines_")[0]
+        if merge == 0:
+            layerBag = qc.QgsVectorLayer("LineString?crs=epsg:7801", "Lines_" + CF.Filename, "memory")
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
@@ -208,8 +218,17 @@ class cad_import_class:
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
-    def addContours(self,CF):
-        layerBag = qc.QgsVectorLayer("Polygon?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
+    def addContours(self,CF,merge):
+        if merge == 2:
+            layers = qc.QgsProject.instance().mapLayersByName("Contours_")
+            exist = True if layers else False
+            if not(exist):
+                layerBag = qc.QgsVectorLayer("Polygon?crs=epsg:7801", "Contours_", "memory")
+            else:
+                layerBag = qc.QgsProject.instance().mapLayersByName("Contours_")[0]
+        if merge == 0:
+            layerBag = qc.QgsVectorLayer("Polygon?crs=epsg:7801", "Contours_" + CF.Filename, "memory")
+
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
@@ -225,20 +244,32 @@ class cad_import_class:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
             feat.setAttribute("id", contour.cid)  # set attributes
             feat.setAttribute("type", contour.type)
-            if not contour.pgon_bad_flag:
+            if not(contour.pgon_bad_flag) and contour.pgon_pt is not None:
                 a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
                 feat.setGeometry(qc.QgsGeometry.fromPolygonXY([a]))
                 layerBag.addFeature(feat)  # add the feature to the layer
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
-    def addPt(self,CF):
-        layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "GeoPts_" + CF.Filename, "memory")
+    def addPt(self,CF,merge):
+
+        if merge == 2:
+            layers = qc.QgsProject.instance().mapLayersByName("GeoPts_")
+            exist = True if layers else False
+            if not(exist):
+                layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "GeoPts_", "memory")
+            else:
+                layerBag = qc.QgsProject.instance().mapLayersByName("GeoPts_")[0]
+        if merge == 0:
+            layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "GeoPts_" + CF.Filename, "memory")
+
+
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
             qc.QgsField("id", QVariant.String),
-            qc.QgsField("type", QVariant.String)])
+            qc.QgsField("type", QVariant.String),
+            qc.QgsField("posH", QVariant.String)])
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
@@ -249,15 +280,26 @@ class cad_import_class:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
             feat.setAttribute("id", gptt.id)  # set attributes
             feat.setAttribute("type", gptt.type)
+            feat.setAttribute("posH", gptt.posH)
                 #a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
-            feat.setGeometry(qc.QgsPointXY(gptt.posXR, gptt.posYR))
+            feat.setGeometry(qc.QgsPoint(gptt.posXR, gptt.posYR))
             layerBag.addFeature(feat)  # add the feature to the layer
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
 
-    def addCadTxt(self, CF):
-        layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "Texts_" + CF.Filename, "memory")
+    def addCadTxt(self, CF,merge):
+
+        if merge == 2:
+            layers = qc.QgsProject.instance().mapLayersByName("Texts_")
+            exist = True if layers else False
+            if not (exist):
+                layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "Texts_", "memory")
+            else:
+                layerBag = qc.QgsProject.instance().mapLayersByName("Texts_")[0]
+        if merge == 0:
+            layerBag = qc.QgsVectorLayer("Point?crs=epsg:7801", "Texts_" + CF.Filename, "memory")
+
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
@@ -300,12 +342,13 @@ class cad_import_class:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             filenames = self.dlg.cadFilePath.splitFilePaths(self.dlg.cadFilePath.filePath())
+            mt = self.dlg.mergeToggle.checkState()
             for filename in filenames:
                 CCF = utils.ReadCadastralFile(filename)
-                self.addContours(CCF)
-                self.addLines(CCF)
-                self.addPt(CCF)
-                self.addCadTxt(CCF)
+                self.addContours(CCF,mt)
+                self.addLines(CCF,mt)
+                self.addPt(CCF,mt)
+                self.addCadTxt(CCF,mt)
 
             print("READING DONE")
 
