@@ -25,7 +25,7 @@ from .resources import *
 from .cad_importer_dialog import cad_import_classDialog
 import os.path
 from .cadutils import utils
-import tqdm
+
 
 from inspect import getsourcefile
 from os.path import abspath
