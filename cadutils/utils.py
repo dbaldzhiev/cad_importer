@@ -13,6 +13,7 @@ if debug:
         print(e)
         print("Missing debug modules...")
 from .mik import *
+from .tableTrans import *
 
 class ReadCadastralFile:
 
@@ -428,8 +429,12 @@ class Semantic:
     def __getitem__(self, item):
         return getattr(self, item)
 
-
+def closest_strings(dictionary, value):
+    closest_codes = sorted(dictionary.keys(), key=lambda x: abs(x - value))[:2]
+    closest_strings = [dictionary[code] for code in closest_codes]
+    return closest_strings
 class Table:
+
     def __init__(self, match):
         self.name = match[0]
         tableBody = match[1]
@@ -455,7 +460,86 @@ class Table:
                 regex_entrys = regex_entrys + ent
 
             rx_entrys = re.compile(regex_entrys, re.MULTILINE)
-            self.entrys = [en.groups() for en in rx_entrys.finditer(match[1])]
+            self.entrys = [list(en.groups()) for en in rx_entrys.finditer(match[1])]
+
+            if self.name == "POZEMLIMOTI":
+                for f in self.fields:
+                    if fields_pozemlimoti.get(f.name) is not None:
+                        f.name = fields_pozemlimoti.get(f.name)
+            if self.name == "PRAVA":
+                for f in self.fields:
+                    if fields_prava.get(f.name) is not None:
+                        f.name = fields_prava.get(f.name)
+            if self.name == "PERSONS":
+                for f in self.fields:
+                    if fields_persons.get(f.name) is not None:
+                        f.name = fields_persons.get(f.name)
+
+            if self.name == "SGRADI":
+                for f in self.fields:
+                    if fields_sgradi.get(f.name) is not None:
+                        f.name = fields_sgradi.get(f.name)
+
+                for value in self.entrys:
+                    if vid_sobstvenost.get(int(value[1])) is not None:
+                        value[1] = vid_sobstvenost.get(int(value[1]))
+                    else:
+                        CS = closest_strings(vid_sobstvenost, int(value[1]))
+                        value[1] = "{0} / {1}".format(CS[0],CS[1])
+
+                    if sg_pred.get(int(value[3])) is not None:
+                        value[3] = sg_pred.get(int(value[3]))
+                    else:
+                        CS = closest_strings(sg_pred, int(value[3]))
+                        value[3] = "{0} / {1}".format(CS[0],CS[1])
+
+            if self.name == "APARTS":
+                for f in self.fields:
+                    if fields_aparts.get(f.name) is not None:
+                        f.name = fields_aparts.get(f.name)
+            if self.name == "ULICI":
+                for f in self.fields:
+                    if fields_ulici.get(f.name) is not None:
+                        f.name = fields_ulici.get(f.name)
+            if self.name == "ADDRESS":
+                for f in self.fields:
+                    if fields_address.get(f.name) is not None:
+                        f.name = fields_address.get(f.name)
+            if self.name == "MESTNOSTI":
+                for f in self.fields:
+                    if fields_mestnosti.get(f.name) is not None:
+                        f.name = fields_mestnosti.get(f.name)
+            if self.name == "ZAPOVEDI":
+                for f in self.fields:
+                    if fields_zapovedi.get(f.name) is not None:
+                        f.name = fields_zapovedi.get(f.name)
+            if self.name == "IZDATELI":
+                for f in self.fields:
+                    if fields_izdateli.get(f.name) is not None:
+                        f.name = fields_izdateli.get(f.name)
+            if self.name == "HISTORY":
+                for f in self.fields:
+                    if fields_history.get(f.name) is not None:
+                        f.name = fields_history.get(f.name)
+            if self.name == "SERVITUTI":
+                for f in self.fields:
+                    if fields_servituti.get(f.name) is not None:
+                        f.name = fields_servituti.get(f.name)
+            if self.name == "OGRPIMO":
+                for f in self.fields:
+                    if fields_address.get(f.name) is not None:
+                        f.name = fields_address.get(f.name)
+            if self.name == "DOCS":
+                for f in self.fields:
+                    if fields_docs.get(f.name) is not None:
+                        f.name = fields_docs.get(f.name)
+            if self.name == "GORIMOTI":
+                for f in self.fields:
+                    if fields_gorimoti.get(f.name) is not None:
+                        f.name = fields_gorimoti.get(f.name)
+
+
+
 
             checker = [chk.groups() for chk in rx_check.finditer(match[1])]
             if len(self.entrys) == len(checker):

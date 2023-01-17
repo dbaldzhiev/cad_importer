@@ -201,8 +201,11 @@ class cad_import_class:
 
         pr = layerBag.dataProvider()
         pr.addAttributes([
-            qc.QgsField("id", QVariant.Int),
-            qc.QgsField("type", QVariant.String)])
+            qc.QgsField("id", QVariant.String),
+            qc.QgsField("type", QVariant.String),
+        qc.QgsField("bordertype", QVariant.String),
+        qc.QgsField("datecreated", QVariant.String),
+        qc.QgsField("datedestroyed", QVariant.String)])
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
@@ -212,6 +215,9 @@ class cad_import_class:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
             feat.setAttribute("id", line.lid)  # set attributes
             feat.setAttribute("type", line.type)
+            feat.setAttribute("bordertype", line.bordertype)
+            feat.setAttribute("datecreated", line.datecreated)
+            feat.setAttribute("datedestroyed", line.datedestroyed)
             feat.setGeometry(qc.QgsGeometry.fromPolylineXY(
                 [qc.QgsPointXY(ptx, pty) for ptx, pty in line.get_referenced_point_sequence]))
             layerBag.addFeature(feat)  # add the feature to the layer
@@ -233,7 +239,9 @@ class cad_import_class:
         pr = layerBag.dataProvider()
         pr.addAttributes([
             qc.QgsField("id", QVariant.String),
-            qc.QgsField("type", QVariant.String)])
+            qc.QgsField("type", QVariant.String),
+        qc.QgsField("datecreated", QVariant.String),
+        qc.QgsField("datedestroyed", QVariant.String)])
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
@@ -244,6 +252,8 @@ class cad_import_class:
             feat = qc.QgsFeature(layerBag.fields())  # Create the feature
             feat.setAttribute("id", contour.cid)  # set attributes
             feat.setAttribute("type", contour.type)
+            feat.setAttribute("datecreated", contour.datecreated)
+            feat.setAttribute("datedestroyed", contour.datedestroyed)
             if not(contour.pgon_bad_flag) and contour.pgon_pt is not None:
                 a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
                 feat.setGeometry(qc.QgsGeometry.fromPolygonXY([a]))
@@ -306,7 +316,10 @@ class cad_import_class:
             qc.QgsField("id", QVariant.String),
             qc.QgsField("type", QVariant.String),
             qc.QgsField("prefixtext", QVariant.String),
-            qc.QgsField("suffixtext", QVariant.String)])
+            qc.QgsField("suffixtext", QVariant.String),
+            qc.QgsField("datecreated", QVariant.String),
+            qc.QgsField("datedestroyed", QVariant.String)
+        ])
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
@@ -318,41 +331,73 @@ class cad_import_class:
             feat.setAttribute("type", txt.type)
             feat.setAttribute("prefixtext", txt.prefixtext.replace("None",""))  # set attributes
             feat.setAttribute("suffixtext", txt.suffixtext.replace("None",""))
+            feat.setAttribute("datecreated", txt.datecreated)  # set attributes
+            feat.setAttribute("datedestroyed", txt.datedestroyed)
             # a = [qc.QgsPointXY(ptx, pty) for ptx, pty in contour.pgon_pt]
             feat.setGeometry(qc.QgsPoint(txt.posXR, txt.posYR))
             layerBag.addFeature(feat)  # add the feature to the layer
 
         layerBag.endEditCommand()  # Stop editing
         layerBag.commitChanges()  # Save changes
+
+    def addTables(self, CF, merge):
+        for tbb in CF.Tables.Tables:
+            if merge == 2:
+                layers = qc.QgsProject.instance().mapLayersByName("Table_" + tbb.name)
+                exist = True if layers else False
+                if not (exist):
+                    layerBag = qc.QgsVectorLayer("NoGeometry?crs=epsg:7801", "Table_" + tbb.name, "memory")
+                else:
+                    layerBag = qc.QgsProject.instance().mapLayersByName("Table_" + tbb.name)[0]
+            if merge == 0:
+                layerBag = qc.QgsVectorLayer("NoGeometry?crs=epsg:7801", "Table_{0}_{1}".format(CF.Filename,tbb.name), "memory")
+            pr = layerBag.dataProvider()
+            FieldNames = []
+            for Field in tbb.fields:
+                FieldNames.append(Field.name)
+            pr.addAttributes([qc.QgsField(f,QVariant.String) for f in FieldNames])
+            layerBag.updateFields()
+            qc.QgsProject.instance().addMapLayer(layerBag)
+            layerBag.startEditing()
+
+            for ent in tbb.entrys:
+                feat = qc.QgsFeature(layerBag.fields())
+                for value,field in zip(ent,FieldNames):
+                    feat.setAttribute(field,value)
+                layerBag.addFeature(feat)
+
+            layerBag.endEditCommand()  # Stop editing
+            layerBag.commitChanges()  # Save changes
     def run(self):
-        """Run method that performs all the real work"""
+            """Run method that performs all the real work"""
 
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start == True:
-            self.first_start = False
-            self.dlg = cad_import_classDialog()
+            # Create the dialog with elements (after translation) and keep reference
+            # Only create GUI ONCE in callback, so that it will only load when the plugin is started
+            if self.first_start == True:
+                self.first_start = False
+                self.dlg = cad_import_classDialog()
 
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            filenames = self.dlg.cadFilePath.splitFilePaths(self.dlg.cadFilePath.filePath())
-            mt = self.dlg.mergeToggle.checkState()
-            for filename in filenames:
-                try:
+            # show the dialog
+            self.dlg.show()
+            # Run the dialog event loop
+            result = self.dlg.exec_()
+            # See if OK was pressed
+            if result:
+                # Do something useful here - delete the line containing pass and
+                # substitute with your code.
+                filenames = self.dlg.cadFilePath.splitFilePaths(self.dlg.cadFilePath.filePath())
+                mt = self.dlg.mergeToggle.checkState()
+                for filename in filenames:
+                    #try:
                     CCF = utils.ReadCadastralFile(filename)
                     self.addContours(CCF,mt)
                     self.addLines(CCF,mt)
                     self.addPt(CCF,mt)
                     self.addCadTxt(CCF,mt)
-                    print(filename + " Imported!")
-                except:
-                    print(filename + " Failed!")
-                    pass
-            print("READING DONE")
+                    self.addTables(CCF,mt)
+                    #print(filename + " Imported!")
+                    #except:
+                    #    print(filename + " Failed!")
+                    #    pass
+                print("READING DONE")
 
