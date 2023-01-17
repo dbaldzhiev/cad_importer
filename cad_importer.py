@@ -35,7 +35,7 @@ from .resources import *
 from .cad_importer_dialog import cad_import_classDialog
 import os.path
 from .cadutils import utils
-
+import tqdm
 
 from inspect import getsourcefile
 from os.path import abspath
@@ -273,7 +273,7 @@ class cad_import_class:
         layerBag.updateFields()
         qc.QgsProject.instance().addMapLayer(layerBag)
         layerBag.startEditing()
-        #layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\CLStyle.qml")
+        layerBag.loadNamedStyle(os.path.dirname(abspath(getsourcefile(lambda: 0)))+"\GLStyle.qml")
 
 
         for gptt in CF.CadasterLayer.gepointObj:
@@ -344,11 +344,15 @@ class cad_import_class:
             filenames = self.dlg.cadFilePath.splitFilePaths(self.dlg.cadFilePath.filePath())
             mt = self.dlg.mergeToggle.checkState()
             for filename in filenames:
-                CCF = utils.ReadCadastralFile(filename)
-                self.addContours(CCF,mt)
-                self.addLines(CCF,mt)
-                self.addPt(CCF,mt)
-                self.addCadTxt(CCF,mt)
-
+                try:
+                    CCF = utils.ReadCadastralFile(filename)
+                    self.addContours(CCF,mt)
+                    self.addLines(CCF,mt)
+                    self.addPt(CCF,mt)
+                    self.addCadTxt(CCF,mt)
+                    print(filename + " Imported!")
+                except:
+                    print(filename + " Failed!")
+                    pass
             print("READING DONE")
 

@@ -328,8 +328,8 @@ class ContC:
         self.datedestroyed = cArray[5]
         rx_contid = re.compile(r"(\d+)")
         self.pgon_ids = list(map(int, rx_contid.findall(cArray[6])))
-        self.pgon_pt, self.pgon_bad_flag = self.polygonize(
-            [lines[linesdic[i]].get_referenced_point_sequence.copy() for i in self.pgon_ids])
+
+        self.pgon_pt, self.pgon_bad_flag = self.polygonize([lines[linesdic[i]].get_referenced_point_sequence.copy() for i in self.pgon_ids])
         self.holes_exist = False
         if self.cid in nests:
             self.holes_exist = True
