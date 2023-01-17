@@ -552,7 +552,6 @@ class Table:
     def __getitem__(self, item):
         return getattr(self, item)
 
-
 class Field:
     def __init__(self, data):
         self.name = data[0]
