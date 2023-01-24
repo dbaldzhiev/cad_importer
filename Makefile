@@ -48,7 +48,7 @@ PY_FILES = \
 
 UI_FILES = cad_importer_dialog_base.ui
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = metadata.txt icon.png logo.png
 
 EXTRA_DIRS =
 
