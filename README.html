@@ -1,7 +1,50 @@
 CAD4 importer
+Този плъгин ще импортира вашите CAD4 файлове в QGIS.
+Проектът е в начален стадии на развитие.
+
+CAD4 е файлов формат за обмен на кадастрална информация в България.
+Спецификация на файловия формат може да се намери на следния адрес:
+https://www.cadastre.bg/softuer
+
+Търсят се хора, които да помогнат в развитието на плъгина. Нужна е помощ за трансформацията/параметрите на по-старите кадастрални системи, КС1930, КС1950, НКС1970, Софийска кадастрална система итн.
+
+
 This plugin will import Bulgarian CAD4 files to QGIS.
 The project is in early development stages.
 
 CAD4 is a file format for exchange of bulgarian cadastral information.
 One can find the format specifications at the following address:
 https://www.cadastre.bg/softuer
+
+Looking for contributors and people with knowledge of QGIS and the Bulgarian cadastral systems CS1930, CS1950, NCS1970, Sofia Cadastral system to help with transformations and WKT strings if posible.
+0.1а - функционална алфа верисия
+
+- Поддържа се импорт на множество файлове; също така могат да бъдат импортирани като един
+- Импорт на всички контури, линии, геоточки, текстове и таблици
+- Поддържат се най-използваните типове линии
+- Поддържа се BGS2005/CCS2005
+
+Известни бъгове и липсващи функции:
+
+- символите се парсват, но не се импортват в QGIS
+- CO се парсват, но не се импортват в QGIS
+- няма поддръжка за CRS, освен BGS2005/CCS2005
+- няма поддръжка за мултиполигони
+- някои функции в таблиците се импортват, но не се превеждат правилно в човешки прочетим формат
+- може да има липсващи типове линии
+
+0.1а - functional alpha
+  - Import of multiple cad files is supported and can be merge-imported
+  - Import of all contours, lines, geopoints, texts and tables
+  - Most used linetypes are supported
+  - BGS2005/CCS2005 is supported 
+  
+  Known bugs and missing features:
+  - symbols are parsed but not imported in Qgis
+  - CO are parsed but not imported in Qgis
+  - no support for CRS other than BGS2005/CCS2005
+  - no support for multipolygons
+  - some features in Tables are imported but not translated properly in human readable format
+  - there may be some linetypes missing
+  
+  
